@@ -143,21 +143,136 @@
       position: absolute; inset: 0; pointer-events: none; will-change: transform;
     }
 
-    /* Eclipse Sun that sets behind mountains on scroll */
-    .eclipse-wrap {
+    /* ================= BLUE BLACK HOLE (GARGANTUA ENGINE) ================= */
+    .blackhole-wrap {
       display: flex; align-items: center; justify-content: center;
-      padding-top: 8vh;
+      padding-top: 6vh; perspective: 1200px;
+      z-index: 2; pointer-events: none;
     }
-    .eclipse {
-      width: min(360px, 58vw); aspect-ratio: 1; border-radius: 50%;
-      background: radial-gradient(circle, rgba(224, 242, 254, 0.95) 0%, rgba(56, 189, 248, 0.5) 38%, rgba(129, 140, 248, 0.16) 68%, transparent 74%);
-      box-shadow: 0 0 140px var(--glow), 0 0 240px rgba(129, 140, 248, 0.3);
+
+    .blackhole {
       position: relative;
+      width: min(680px, 86vw);
+      aspect-ratio: 1;
+      display: flex; align-items: center; justify-content: center;
+      transform-style: preserve-3d;
+      will-change: transform;
     }
-    .eclipse::after {
-      content: ""; position: absolute; inset: -24px; border-radius: 50%;
-      border: 1px dashed rgba(56, 189, 248, 0.35);
-      animation: spin 34s linear infinite;
+
+    /* Outer Deep Diffuse Accretion Cloud */
+    .bh-accretion-glow {
+      position: absolute; inset: -45%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 48% 48%, rgba(56, 189, 248, 0.45) 0%, rgba(14, 165, 233, 0.28) 30%, rgba(99, 102, 241, 0.14) 52%, transparent 72%);
+      filter: blur(48px);
+      animation: bh-breathe 8s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    /* Gravitationally Warped Upper Lens Arc */
+    .bh-lens-upper {
+      position: absolute;
+      top: 6%; width: 94%; height: 50%;
+      border-radius: 50% 50% 0 0;
+      border-top: 6px solid #ffffff;
+      box-shadow: 0 -8px 36px #38bdf8, 0 -22px 75px #0284c7, inset 0 12px 34px rgba(56, 189, 248, 0.6);
+      background: radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.48) 0%, transparent 74%);
+      pointer-events: none;
+      filter: drop-shadow(0 0 16px #38bdf8);
+      animation: bh-lens-flux 6s ease-in-out infinite alternate;
+      z-index: 2;
+    }
+
+    /* Gravitationally Warped Lower Lens Arc */
+    .bh-lens-lower {
+      position: absolute;
+      bottom: 6%; width: 90%; height: 48%;
+      border-radius: 0 0 50% 50%;
+      border-bottom: 5px solid rgba(224, 242, 254, 0.95);
+      box-shadow: 0 8px 32px #38bdf8, 0 20px 65px #0369a1, inset 0 -10px 30px rgba(56, 189, 248, 0.48);
+      background: radial-gradient(ellipse at 50% 100%, rgba(56, 189, 248, 0.4) 0%, transparent 74%);
+      pointer-events: none;
+      filter: drop-shadow(0 0 14px #0284c7);
+      animation: bh-lens-flux 6s ease-in-out 1.2s infinite alternate;
+      z-index: 2;
+    }
+
+    /* Relativistic Tilted Accretion Disk */
+    .bh-disk {
+      position: absolute;
+      width: 148%; height: 32%;
+      border-radius: 50%;
+      background: linear-gradient(90deg, 
+        rgba(56, 189, 248, 0.15) 0%, 
+        rgba(56, 189, 248, 0.9) 28%, 
+        #ffffff 48%, 
+        rgba(56, 189, 248, 0.92) 54%, 
+        rgba(99, 102, 241, 0.55) 78%, 
+        rgba(56, 189, 248, 0.1) 100%);
+      box-shadow: 0 0 55px #38bdf8, 0 0 110px #0284c7, 0 0 170px rgba(99, 102, 241, 0.5);
+      transform: rotate(-14deg);
+      filter: blur(1.5px);
+      animation: bh-disk-wobble 16s ease-in-out infinite alternate;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* Photon Sphere Ring (Light Trapped in Orbit) */
+    .bh-photon-ring {
+      position: absolute;
+      width: 58%; height: 58%;
+      border-radius: 50%;
+      border: 3px solid #ffffff;
+      box-shadow: 
+        0 0 16px #ffffff,
+        0 0 38px #38bdf8,
+        0 0 75px #0284c7,
+        inset 0 0 26px #38bdf8;
+      filter: drop-shadow(0 0 22px #38bdf8);
+      animation: bh-ring-pulse 3.6s ease-in-out infinite alternate;
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    /* The Event Horizon (Pure Black Void) */
+    .bh-event-horizon {
+      position: absolute;
+      width: 55%; height: 55%;
+      border-radius: 50%;
+      background: #000000;
+      box-shadow: 
+        inset 0 0 45px rgba(0, 0, 0, 1),
+        0 0 36px rgba(0, 0, 0, 0.98);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Singularity Center Void */
+    .bh-singularity {
+      position: absolute;
+      width: 32%; height: 32%;
+      border-radius: 50%;
+      background: radial-gradient(circle, #000000 0%, #01040a 100%);
+      z-index: 6;
+      box-shadow: inset 0 0 25px #000000;
+      pointer-events: none;
+    }
+
+    @keyframes bh-breathe {
+      0% { transform: scale(0.96); opacity: 0.85; }
+      100% { transform: scale(1.06); opacity: 1; }
+    }
+    @keyframes bh-lens-flux {
+      0% { transform: scaleY(0.95); opacity: 0.88; }
+      100% { transform: scaleY(1.05); opacity: 1; }
+    }
+    @keyframes bh-disk-wobble {
+      0% { transform: rotate(-14deg) scaleX(0.98); }
+      100% { transform: rotate(-12deg) scaleX(1.02); }
+    }
+    @keyframes bh-ring-pulse {
+      0% { transform: scale(0.99); opacity: 0.92; box-shadow: 0 0 16px #ffffff, 0 0 38px #38bdf8, 0 0 75px #0284c7, inset 0 0 26px #38bdf8; }
+      100% { transform: scale(1.018); opacity: 1; box-shadow: 0 0 24px #ffffff, 0 0 54px #38bdf8, 0 0 100px #0284c7, inset 0 0 34px #38bdf8; }
     }
 
     /* Parallax mountain layers */
@@ -170,7 +285,7 @@
     .hero-content {
       position: relative; z-index: 10; text-align: center;
       width: min(800px, calc(100% - 32px));
-      padding-bottom: 12vh; will-change: transform, opacity;
+      padding-top: 80px; padding-bottom: 10vh; will-change: transform, opacity;
     }
     .avatar-ring {
       width: 102px; height: 102px; margin: 0 auto 18px; border-radius: 50%;
@@ -192,9 +307,8 @@
     .hero-title {
       font-size: clamp(3.4rem, 8.5vw, 6.6rem); font-weight: 900;
       letter-spacing: -0.04em; line-height: 0.98;
-      background: linear-gradient(95deg, #ffffff 0%, #bae6fd 52%, #c7d2fe 100%);
-      -webkit-background-clip: text; background-clip: text; color: transparent;
-      filter: drop-shadow(0 8px 32px rgba(56, 189, 248, 0.3));
+      color: #ffffff;
+      text-shadow: 0 0 24px rgba(56, 189, 248, 0.95), 0 0 55px rgba(56, 189, 248, 0.45), 0 6px 24px rgba(0, 0, 0, 0.9);
     }
     .hero-role {
       margin-top: 14px; font-family: var(--mono);
@@ -463,9 +577,17 @@
   <!-- TRUE 6-LAYER SCROLL + 3D MOUSE PARALLAX HERO -->
   <section class="hero" id="top">
     <div class="hero-perspective-box" id="heroBox">
-      <!-- Layer 1: Eclipse Sun (descends on scroll + drifts on mouse) -->
-      <div class="p-layer eclipse-wrap" data-scroll-speed="0.58" data-mouse-factor="0.04">
-        <div class="eclipse"></div>
+      <!-- Layer 1: Zoomed-In Blue Black Hole (Gargantua Singularity) -->
+      <div class="p-layer blackhole-wrap" id="blackholeWrap" data-scroll-speed="0.38" data-mouse-factor="0.04">
+        <div class="blackhole" id="blackhole">
+          <div class="bh-accretion-glow"></div>
+          <div class="bh-lens-upper"></div>
+          <div class="bh-disk"></div>
+          <div class="bh-lens-lower"></div>
+          <div class="bh-photon-ring"></div>
+          <div class="bh-event-horizon"></div>
+          <div class="bh-singularity"></div>
+        </div>
       </div>
 
       <!-- Layer 2: Far Ridge (slow) -->
@@ -959,8 +1081,18 @@
             el.style.transform = `translate3d(${mx.toFixed(1)}px, ${my.toFixed(1)}px, 0)`;
           }
 
-          const heroFade = Math.max(0, 1 - currentY / (window.innerHeight * 0.72));
-          heroContent.style.transform = `translate3d(0, ${(currentY * 0.24).toFixed(1)}px, 0)`;
+          // Zoom in into the Blue Black Hole as you scroll down (portal plunge)
+          const bhEl = document.getElementById('blackhole');
+          if (bhEl) {
+            const vh = window.innerHeight;
+            const scrollRatio = Math.max(0, currentY / (vh * 0.9));
+            const zoomScale = 1 + scrollRatio * 3.5;
+            const rotDeg = currentY * 0.05;
+            bhEl.style.transform = `scale(${zoomScale.toFixed(3)}) rotate(${rotDeg.toFixed(2)}deg)`;
+          }
+
+          const heroFade = Math.max(0, 1 - Math.pow(currentY / (window.innerHeight * 0.85), 2));
+          heroContent.style.transform = `translate3d(0, ${(currentY * 0.22).toFixed(1)}px, 0)`;
           heroContent.style.opacity = heroFade.toFixed(3);
           scrollCue.style.opacity = Math.max(0, 1 - currentY / 180).toFixed(3);
 
