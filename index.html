@@ -143,136 +143,29 @@
       position: absolute; inset: 0; pointer-events: none; will-change: transform;
     }
 
-    /* ================= BLUE BLACK HOLE (GARGANTUA ENGINE) ================= */
+    /* ================= BLUE BLACK HOLE (GARGANTUA ZERO-LAG ENGINE) ================= */
     .blackhole-wrap {
       display: flex; align-items: center; justify-content: center;
-      padding-top: 6vh; perspective: 1200px;
+      padding-top: 5vh; perspective: 1200px;
       z-index: 2; pointer-events: none;
     }
 
     .blackhole {
       position: relative;
-      width: min(680px, 86vw);
+      width: min(780px, 92vw);
       aspect-ratio: 1;
       display: flex; align-items: center; justify-content: center;
-      transform-style: preserve-3d;
+      contain: paint layout;
       will-change: transform;
+      backface-visibility: hidden;
+      transform: translate3d(0, 0, 0);
     }
 
-    /* Outer Deep Diffuse Accretion Cloud */
-    .bh-accretion-glow {
-      position: absolute; inset: -45%;
-      border-radius: 50%;
-      background: radial-gradient(circle at 48% 48%, rgba(56, 189, 248, 0.45) 0%, rgba(14, 165, 233, 0.28) 30%, rgba(99, 102, 241, 0.14) 52%, transparent 72%);
-      filter: blur(48px);
-      animation: bh-breathe 8s ease-in-out infinite alternate;
-      pointer-events: none;
-    }
-
-    /* Gravitationally Warped Upper Lens Arc */
-    .bh-lens-upper {
-      position: absolute;
-      top: 6%; width: 94%; height: 50%;
-      border-radius: 50% 50% 0 0;
-      border-top: 6px solid #ffffff;
-      box-shadow: 0 -8px 36px #38bdf8, 0 -22px 75px #0284c7, inset 0 12px 34px rgba(56, 189, 248, 0.6);
-      background: radial-gradient(ellipse at 50% 0%, rgba(56, 189, 248, 0.48) 0%, transparent 74%);
-      pointer-events: none;
-      filter: drop-shadow(0 0 16px #38bdf8);
-      animation: bh-lens-flux 6s ease-in-out infinite alternate;
-      z-index: 2;
-    }
-
-    /* Gravitationally Warped Lower Lens Arc */
-    .bh-lens-lower {
-      position: absolute;
-      bottom: 6%; width: 90%; height: 48%;
-      border-radius: 0 0 50% 50%;
-      border-bottom: 5px solid rgba(224, 242, 254, 0.95);
-      box-shadow: 0 8px 32px #38bdf8, 0 20px 65px #0369a1, inset 0 -10px 30px rgba(56, 189, 248, 0.48);
-      background: radial-gradient(ellipse at 50% 100%, rgba(56, 189, 248, 0.4) 0%, transparent 74%);
-      pointer-events: none;
-      filter: drop-shadow(0 0 14px #0284c7);
-      animation: bh-lens-flux 6s ease-in-out 1.2s infinite alternate;
-      z-index: 2;
-    }
-
-    /* Relativistic Tilted Accretion Disk */
-    .bh-disk {
-      position: absolute;
-      width: 148%; height: 32%;
-      border-radius: 50%;
-      background: linear-gradient(90deg, 
-        rgba(56, 189, 248, 0.15) 0%, 
-        rgba(56, 189, 248, 0.9) 28%, 
-        #ffffff 48%, 
-        rgba(56, 189, 248, 0.92) 54%, 
-        rgba(99, 102, 241, 0.55) 78%, 
-        rgba(56, 189, 248, 0.1) 100%);
-      box-shadow: 0 0 55px #38bdf8, 0 0 110px #0284c7, 0 0 170px rgba(99, 102, 241, 0.5);
-      transform: rotate(-14deg);
-      filter: blur(1.5px);
-      animation: bh-disk-wobble 16s ease-in-out infinite alternate;
-      pointer-events: none;
-      z-index: 3;
-    }
-
-    /* Photon Sphere Ring (Light Trapped in Orbit) */
-    .bh-photon-ring {
-      position: absolute;
-      width: 58%; height: 58%;
-      border-radius: 50%;
-      border: 3px solid #ffffff;
-      box-shadow: 
-        0 0 16px #ffffff,
-        0 0 38px #38bdf8,
-        0 0 75px #0284c7,
-        inset 0 0 26px #38bdf8;
-      filter: drop-shadow(0 0 22px #38bdf8);
-      animation: bh-ring-pulse 3.6s ease-in-out infinite alternate;
-      z-index: 4;
-      pointer-events: none;
-    }
-
-    /* The Event Horizon (Pure Black Void) */
-    .bh-event-horizon {
-      position: absolute;
-      width: 55%; height: 55%;
-      border-radius: 50%;
-      background: #000000;
-      box-shadow: 
-        inset 0 0 45px rgba(0, 0, 0, 1),
-        0 0 36px rgba(0, 0, 0, 0.98);
-      z-index: 5;
-      pointer-events: none;
-    }
-
-    /* Singularity Center Void */
-    .bh-singularity {
-      position: absolute;
-      width: 32%; height: 32%;
-      border-radius: 50%;
-      background: radial-gradient(circle, #000000 0%, #01040a 100%);
-      z-index: 6;
-      box-shadow: inset 0 0 25px #000000;
-      pointer-events: none;
-    }
-
-    @keyframes bh-breathe {
-      0% { transform: scale(0.96); opacity: 0.85; }
-      100% { transform: scale(1.06); opacity: 1; }
-    }
-    @keyframes bh-lens-flux {
-      0% { transform: scaleY(0.95); opacity: 0.88; }
-      100% { transform: scaleY(1.05); opacity: 1; }
-    }
-    @keyframes bh-disk-wobble {
-      0% { transform: rotate(-14deg) scaleX(0.98); }
-      100% { transform: rotate(-12deg) scaleX(1.02); }
-    }
-    @keyframes bh-ring-pulse {
-      0% { transform: scale(0.99); opacity: 0.92; box-shadow: 0 0 16px #ffffff, 0 0 38px #38bdf8, 0 0 75px #0284c7, inset 0 0 26px #38bdf8; }
-      100% { transform: scale(1.018); opacity: 1; box-shadow: 0 0 24px #ffffff, 0 0 54px #38bdf8, 0 0 100px #0284c7, inset 0 0 34px #38bdf8; }
+    .bh-svg {
+      width: 100%; height: 100%;
+      overflow: visible;
+      filter: drop-shadow(0 0 32px rgba(56, 189, 248, 0.45));
+      contain: paint;
     }
 
     /* Parallax mountain layers */
@@ -580,13 +473,131 @@
       <!-- Layer 1: Zoomed-In Blue Black Hole (Gargantua Singularity) -->
       <div class="p-layer blackhole-wrap" id="blackholeWrap" data-scroll-speed="0.38" data-mouse-factor="0.04">
         <div class="blackhole" id="blackhole">
-          <div class="bh-accretion-glow"></div>
-          <div class="bh-lens-upper"></div>
-          <div class="bh-disk"></div>
-          <div class="bh-lens-lower"></div>
-          <div class="bh-photon-ring"></div>
-          <div class="bh-event-horizon"></div>
-          <div class="bh-singularity"></div>
+          <svg class="bh-svg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <!-- Deep Outer Cosmic Lensing Glow -->
+              <radialGradient id="bh-glow" cx="46%" cy="48%" r="52%">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55"/>
+                <stop offset="22%" stop-color="#0ea5e9" stop-opacity="0.35"/>
+                <stop offset="45%" stop-color="#0369a1" stop-opacity="0.2"/>
+                <stop offset="70%" stop-color="#1e1b4b" stop-opacity="0.08"/>
+                <stop offset="90%" stop-color="#020617" stop-opacity="0"/>
+              </radialGradient>
+
+              <!-- Upper Warped Arc Gradient with Relativistic Doppler Beaming -->
+              <linearGradient id="bh-arc-up" x1="0%" y1="50%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.15"/>
+                <stop offset="16%" stop-color="#38bdf8" stop-opacity="0.75"/>
+                <stop offset="30%" stop-color="#ffffff" stop-opacity="1"/>
+                <stop offset="46%" stop-color="#7dd3fc" stop-opacity="0.95"/>
+                <stop offset="62%" stop-color="#38bdf8" stop-opacity="0.8"/>
+                <stop offset="82%" stop-color="#0369a1" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0.1"/>
+              </linearGradient>
+
+              <!-- Lower Warped Arc Gradient -->
+              <linearGradient id="bh-arc-down" x1="0%" y1="50%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.1"/>
+                <stop offset="20%" stop-color="#38bdf8" stop-opacity="0.7"/>
+                <stop offset="36%" stop-color="#bae6fd" stop-opacity="0.9"/>
+                <stop offset="55%" stop-color="#38bdf8" stop-opacity="0.75"/>
+                <stop offset="76%" stop-color="#0284c7" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#0f172a" stop-opacity="0.05"/>
+              </linearGradient>
+
+              <!-- Relativistic Equatorial Disk Doppler Gradient -->
+              <linearGradient id="bh-disk-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.05"/>
+                <stop offset="14%" stop-color="#38bdf8" stop-opacity="0.75"/>
+                <stop offset="26%" stop-color="#ffffff" stop-opacity="1"/>
+                <stop offset="40%" stop-color="#7dd3fc" stop-opacity="0.95"/>
+                <stop offset="60%" stop-color="#38bdf8" stop-opacity="0.7"/>
+                <stop offset="80%" stop-color="#0284c7" stop-opacity="0.4"/>
+                <stop offset="100%" stop-color="#1e3a8a" stop-opacity="0.05"/>
+              </linearGradient>
+
+              <!-- Photon Ring Gradient -->
+              <linearGradient id="bh-photon-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                <stop offset="28%" stop-color="#ffffff" stop-opacity="1"/>
+                <stop offset="50%" stop-color="#7dd3fc" stop-opacity="0.9"/>
+                <stop offset="78%" stop-color="#38bdf8" stop-opacity="0.75"/>
+                <stop offset="100%" stop-color="#0284c7" stop-opacity="0.5"/>
+              </linearGradient>
+
+              <!-- Relativistic Blueshift Hotspot Flare -->
+              <radialGradient id="bh-flare" cx="35%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+                <stop offset="25%" stop-color="#7dd3fc" stop-opacity="0.8"/>
+                <stop offset="55%" stop-color="#0284c7" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+              </radialGradient>
+
+              <!-- Lightweight GPU-cached SVG filter -->
+              <filter id="bh-soft-blur" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="4"/>
+              </filter>
+            </defs>
+
+            <!-- Layer 1: Ambient Gravitational Lensing Glow -->
+            <circle cx="450" cy="450" r="430" fill="url(#bh-glow)"/>
+            <circle cx="450" cy="450" r="280" fill="url(#bh-glow)"/>
+
+            <!-- Layer 2: Warped Upper Accretion Arc (Einstein Lensing over the Horizon) -->
+            <g class="bh-lensed-upper">
+              <path d="M 140 450 C 140 50 760 50 760 450 C 700 450 690 275 450 275 C 210 275 200 450 140 450 Z" 
+                    fill="url(#bh-arc-up)" opacity="0.92"/>
+              <path d="M 190 450 C 190 195 710 195 710 450" fill="none" stroke="#ffffff" stroke-width="2.6" opacity="0.96"/>
+              <path d="M 220 450 C 220 220 680 220 680 450" fill="none" stroke="#7dd3fc" stroke-width="3" opacity="0.8"/>
+              <path d="M 260 450 C 260 250 640 250 640 450" fill="none" stroke="#38bdf8" stroke-width="2.2" opacity="0.65"/>
+              <path d="M 300 450 C 300 275 600 275 600 450" fill="none" stroke="#818cf8" stroke-width="1.6" opacity="0.5"/>
+            </g>
+
+            <!-- Layer 3: Warped Lower Accretion Arc (Einstein Lensing under the Horizon) -->
+            <g class="bh-lensed-lower">
+              <path d="M 160 450 C 160 840 740 840 740 450 C 680 450 670 625 450 625 C 230 625 220 450 160 450 Z" 
+                    fill="url(#bh-arc-down)" opacity="0.86"/>
+              <path d="M 210 450 C 210 700 690 700 690 450" fill="none" stroke="#7dd3fc" stroke-width="2.4" opacity="0.8"/>
+              <path d="M 250 450 C 250 660 650 660 650 450" fill="none" stroke="#0284c7" stroke-width="2" opacity="0.55"/>
+            </g>
+
+            <!-- Tilted Accretion Disk Group (inclined at -12.5 degrees) -->
+            <g transform="rotate(-12.5 450 450)">
+              <!-- Layer 4: Rear Half of Equatorial Disk (orbits behind black hole) -->
+              <path d="M 20 450 A 430 100 0 0 1 880 450 L 650 450 A 200 52 0 0 0 250 450 Z" 
+                    fill="url(#bh-disk-grad)" opacity="0.88"/>
+              <path d="M 50 450 A 400 92 0 0 1 850 450" fill="none" stroke="#7dd3fc" stroke-width="2" opacity="0.75"/>
+              <path d="M 100 450 A 350 80 0 0 1 800 450" fill="none" stroke="#ffffff" stroke-width="2.2" opacity="0.85"/>
+            </g>
+
+            <!-- Layer 5: The Event Horizon (Pure Black Void Shadow) -->
+            <circle cx="450" cy="450" r="150" fill="#000000"/>
+
+            <!-- Layer 6: Photon Sphere Ring (Light trapped in orbit at boundary) -->
+            <circle cx="450" cy="450" r="154" fill="none" stroke="url(#bh-photon-grad)" stroke-width="3" opacity="0.96"/>
+            <circle cx="450" cy="450" r="156" fill="none" stroke="#38bdf8" stroke-width="1.2" opacity="0.85"/>
+            <circle cx="450" cy="450" r="152.2" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.98"/>
+
+            <!-- Event Horizon Inner Eclipse Mask -->
+            <circle cx="450" cy="450" r="149" fill="#000000"/>
+
+            <!-- Layer 7: Front Half of Equatorial Accretion Disk (crossing IN FRONT of the Event Horizon!) -->
+            <g transform="rotate(-12.5 450 450)">
+              <path d="M 20 450 A 430 100 0 0 0 880 450 L 650 450 A 200 52 0 0 1 250 450 Z" 
+                    fill="url(#bh-disk-grad)" opacity="0.95"/>
+              <path d="M 50 450 A 400 92 0 0 0 850 450" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.75"/>
+              <path d="M 90 450 A 360 82 0 0 0 810 450" fill="none" stroke="#ffffff" stroke-width="2.8" opacity="0.95"/>
+              <path d="M 130 450 A 320 73 0 0 0 770 450" fill="none" stroke="#7dd3fc" stroke-width="2" opacity="0.85"/>
+              <path d="M 170 450 A 280 64 0 0 0 730 450" fill="none" stroke="#bae6fd" stroke-width="1.8" opacity="0.9"/>
+            </g>
+
+            <!-- Layer 8: Relativistic Doppler Blueshift Hotspot (Left Horizon Cusp Glare) -->
+            <ellipse cx="270" cy="488" rx="95" ry="42" transform="rotate(-12.5 270 488)" fill="url(#bh-flare)" opacity="0.88"/>
+            <circle cx="280" cy="485" r="16" fill="#ffffff" opacity="0.92" filter="url(#bh-soft-blur)"/>
+
+            <!-- Layer 9: Center Singularity Absolute Black Void -->
+            <circle cx="450" cy="450" r="115" fill="#000000"/>
+          </svg>
         </div>
       </div>
 
@@ -991,6 +1002,18 @@
 
       const heroLayers = [...document.querySelectorAll('[data-scroll-speed]')];
       const colCards = [...document.querySelectorAll('[data-col-parallax]')];
+      let colCardTops = null;
+      function getColCardTops() {
+        if (!colCardTops) {
+          colCardTops = colCards.map(c => {
+            let top = 0, el = c;
+            while (el) { top += el.offsetTop; el = el.offsetParent; }
+            return top;
+          });
+        }
+        return colCardTops;
+      }
+      window.addEventListener('resize', () => { colCardTops = null; });
       const heroContent = document.getElementById('heroContent');
       const heroBox = document.getElementById('heroBox');
       const scrollCue = document.getElementById('scrollCue');
@@ -1088,7 +1111,7 @@
             const scrollRatio = Math.max(0, currentY / (vh * 0.9));
             const zoomScale = 1 + scrollRatio * 3.5;
             const rotDeg = currentY * 0.05;
-            bhEl.style.transform = `scale(${zoomScale.toFixed(3)}) rotate(${rotDeg.toFixed(2)}deg)`;
+            bhEl.style.transform = `translate3d(0, 0, 0) scale(${zoomScale.toFixed(3)}) rotate(${rotDeg.toFixed(2)}deg)`;
           }
 
           const heroFade = Math.max(0, 1 - Math.pow(currentY / (window.innerHeight * 0.85), 2));
@@ -1096,17 +1119,18 @@
           heroContent.style.opacity = heroFade.toFixed(3);
           scrollCue.style.opacity = Math.max(0, 1 - currentY / 180).toFixed(3);
 
-          // Bento columns counter-parallax
+          // Bento columns counter-parallax (zero-lag cached layout)
           if (window.innerWidth > 900) {
             const vh = window.innerHeight;
-            for (const card of colCards) {
-              const rect = card.getBoundingClientRect();
-              const centerDelta = (rect.top + rect.height / 2 - vh / 2) / vh;
+            const cardTops = getColCardTops();
+            colCards.forEach((card, idx) => {
+              const cardCenter = cardTops[idx] + card.offsetHeight / 2;
+              const centerDelta = (cardCenter - currentY - vh / 2) / vh;
               const strength = Number(card.dataset.colParallax);
               if (!card.matches(':hover')) {
                 card.style.transform = `translate3d(0, ${(centerDelta * strength).toFixed(1)}px, 0)`;
               }
-            }
+            });
           }
 
           // Footer scroll wave shift
