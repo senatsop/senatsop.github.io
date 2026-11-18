@@ -364,6 +364,78 @@
     .open-link { color: var(--cyan); font-weight: 700; }
     .open-link:hover { text-decoration: underline; }
 
+    /* Holographic Schematic Viewports for Build Cards */
+    .proj-viewport {
+      width: 100%; height: 126px; border-radius: 12px; margin-bottom: 16px;
+      background: rgba(4, 8, 20, 0.75); border: 1px solid var(--border);
+      position: relative; overflow: hidden; transform: translateZ(26px);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.85);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .proj-viewport::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(rgba(56, 189, 248, 0) 50%, rgba(0, 0, 0, 0.28) 50%);
+      background-size: 100% 4px; opacity: 0.45;
+    }
+    .proj-card:hover .proj-viewport {
+      border-color: var(--cyan);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.2), inset 0 0 24px rgba(0, 0, 0, 0.85);
+    }
+    .proj-viewport-svg { width: 100%; height: 100%; display: block; }
+    .scan-laser { animation: ocr-sweep 2.8s ease-in-out infinite alternate; }
+    .pulse-node { animation: node-pulse 1.8s ease-in-out infinite alternate; }
+
+    @keyframes ocr-sweep { 0% { transform: translateY(-40px); opacity: 0.3; } 100% { transform: translateY(40px); opacity: 1; } }
+    @keyframes node-pulse { 0% { r: 4px; opacity: 0.6; } 100% { r: 6.5px; opacity: 1; } }
+
+    /* Tried Languages During Vibecoding Section */
+    .tried-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+      margin-top: 18px; perspective: 1100px;
+    }
+    .tried-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 22px; position: relative;
+      overflow: hidden; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      transform-style: preserve-3d; will-change: transform;
+    }
+    .tried-card:hover {
+      transform: translateY(-5px); border-color: rgba(239, 68, 68, 0.5);
+      box-shadow: 0 18px 40px rgba(239, 68, 68, 0.14);
+    }
+    .tried-top {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+    }
+    .tried-name { font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+    .tried-pill {
+      font-family: var(--mono); font-size: 10px; font-weight: 700;
+      padding: 3px 10px; border-radius: 999px; border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #f87171; background: rgba(239, 68, 68, 0.12);
+    }
+    .tried-log {
+      font-family: var(--mono); font-size: 12px; color: var(--muted); line-height: 1.6;
+      margin-bottom: 16px; min-height: 38px;
+    }
+    .tried-meter {
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: var(--mono); font-size: 10.5px; margin-bottom: 6px;
+      color: var(--dim);
+    }
+
+    /* Ambient Perspective Cyber Floor Grid */
+    .cyber-grid-floor {
+      position: absolute; bottom: 0; left: -50%; width: 200%; height: 500px;
+      background-image: 
+        linear-gradient(to right, rgba(56, 189, 248, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+      background-size: 44px 44px;
+      transform: perspective(600px) rotateX(74deg);
+      transform-origin: bottom center;
+      pointer-events: none; z-index: 1; opacity: 0.55;
+    }
+
     /* Multi-Plane Parallax Shards & Cyber Runes */
     .p-shard {
       position: absolute; font-family: var(--mono); font-size: 11px; font-weight: 700;
@@ -531,7 +603,7 @@
 
     @media (max-width: 900px) {
       .nav-links, .depth-readout, .hud-side-gauge, .p-shard { display: none; }
-      .bento, .projects-grid, .telemetry-strip { grid-template-columns: 1fr; }
+      .bento, .projects-grid, .tried-grid, .telemetry-strip { grid-template-columns: 1fr; }
       .section { padding: 72px 0 24px; }
       .custom-cursor { display: none; }
     }
@@ -554,6 +626,7 @@
     <nav class="nav-links" aria-label="Primary">
       <a href="#signal">Signal</a>
       <a href="#builds">Builds</a>
+      <a href="#tried">Tried</a>
       <a href="#telemetry">Telemetry</a>
       <a href="#arsenal">Arsenal</a>
     </nav>
@@ -582,8 +655,9 @@
         <a class="hud-depth-node active" href="#top" data-target="top">01 // TOP</a>
         <a class="hud-depth-node" href="#signal" data-target="signal">02 // SIGNAL</a>
         <a class="hud-depth-node" href="#builds" data-target="builds">03 // BUILDS</a>
-        <a class="hud-depth-node" href="#telemetry" data-target="telemetry">04 // METRICS</a>
-        <a class="hud-depth-node" href="#arsenal" data-target="arsenal">05 // ARSENAL</a>
+        <a class="hud-depth-node" href="#tried" data-target="tried">04 // TRIED</a>
+        <a class="hud-depth-node" href="#telemetry" data-target="telemetry">05 // METRICS</a>
+        <a class="hud-depth-node" href="#arsenal" data-target="arsenal">06 // ARSENAL</a>
       </div>
     </div>
   </aside>
@@ -898,6 +972,30 @@
       <div class="projects-grid" id="projGrid">
         <article class="glass proj-card reveal" data-tilt data-col-parallax="-18" data-category="progress transit">
           <div class="proj-glare"></div>
+          <div class="proj-viewport">
+            <svg class="proj-viewport-svg" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="sakay-route-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="50%" stop-color="#2dd4bf"/>
+                  <stop offset="100%" stop-color="#818cf8"/>
+                </linearGradient>
+              </defs>
+              <path d="M 0 30 L 460 30 M 0 60 L 460 60 M 0 90 L 460 90 M 115 0 L 115 120 M 230 0 L 230 120 M 345 0 L 345 120" stroke="rgba(56,189,248,0.12)" stroke-width="1"/>
+              <path d="M 40 85 C 120 20 180 100 260 40 C 330 -10 390 80 430 50" fill="none" stroke="url(#sakay-route-grad)" stroke-width="3.5" stroke-linecap="round"/>
+              <circle cx="40" cy="85" r="5" fill="#38bdf8"/>
+              <text x="40" y="105" fill="#94a3b8" font-family="monospace" font-size="9" text-anchor="middle">TAGBILARAN</text>
+              <circle cx="160" cy="62" r="4" fill="#2dd4bf"/>
+              <text x="160" y="82" fill="#94a3b8" font-family="monospace" font-size="9" text-anchor="middle">PANGLAO</text>
+              <circle cx="260" cy="40" r="4.5" fill="#818cf8"/>
+              <text x="260" y="24" fill="#94a3b8" font-family="monospace" font-size="9" text-anchor="middle">TUBIGON</text>
+              <circle cx="430" cy="50" r="5" fill="#38bdf8"/>
+              <text x="420" y="70" fill="#94a3b8" font-family="monospace" font-size="9" text-anchor="middle">CARMEN</text>
+              <circle class="pulse-node" cx="210" cy="51" r="6" fill="#ffffff" stroke="#2dd4bf" stroke-width="2"/>
+              <text x="16" y="20" fill="#38bdf8" font-family="monospace" font-size="10" font-weight="700">GIS BOHOL // ROUTE #04</text>
+              <text x="444" y="20" fill="#2dd4bf" font-family="monospace" font-size="9.5" text-anchor="end">ETA 12m</text>
+            </svg>
+          </div>
           <div>
             <div class="proj-top">
               <span class="proj-repo">01 // senatsop/sakay</span>
@@ -914,6 +1012,28 @@
 
         <article class="glass proj-card reveal" data-tilt data-col-parallax="18" data-category="progress transit">
           <div class="proj-glare"></div>
+          <div class="proj-viewport">
+            <svg class="proj-viewport-svg" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="ocr-beam" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0"/>
+                  <stop offset="50%" stop-color="#2dd4bf" stop-opacity="0.85"/>
+                  <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <rect x="25" y="30" width="90" height="34" rx="6" fill="rgba(45,212,191,0.15)" stroke="rgba(45,212,191,0.4)"/>
+              <text x="70" y="52" fill="#2dd4bf" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">CS 101</text>
+              <rect x="130" y="30" width="90" height="70" rx="6" fill="rgba(56,189,248,0.15)" stroke="rgba(56,189,248,0.4)"/>
+              <text x="175" y="68" fill="#38bdf8" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">DATA 301</text>
+              <rect x="235" y="55" width="95" height="45" rx="6" fill="rgba(129,140,248,0.15)" stroke="rgba(129,140,248,0.4)"/>
+              <text x="282.5" y="82" fill="#818cf8" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">MATH 21</text>
+              <rect x="345" y="30" width="90" height="40" rx="6" fill="rgba(244,114,182,0.15)" stroke="rgba(244,114,182,0.4)"/>
+              <text x="390" y="54" fill="#f472b6" font-family="monospace" font-size="11" font-weight="700" text-anchor="middle">AI 204</text>
+              <line class="scan-laser" x1="0" y1="65" x2="460" y2="65" stroke="url(#ocr-beam)" stroke-width="2.5"/>
+              <text x="16" y="20" fill="#2dd4bf" font-family="monospace" font-size="10" font-weight="700">OCR TIMETABLE STUDIO</text>
+              <text x="444" y="20" fill="#38bdf8" font-family="monospace" font-size="9.5" text-anchor="end">CONF: 98.4%</text>
+            </svg>
+          </div>
           <div>
             <div class="proj-top">
               <span class="proj-repo">02 // senatsop/loadwise</span>
@@ -930,6 +1050,22 @@
 
         <article class="glass proj-card reveal" data-tilt data-col-parallax="-18" data-category="progress tools">
           <div class="proj-glare"></div>
+          <div class="proj-viewport">
+            <svg class="proj-viewport-svg" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="460" height="120" fill="#030814"/>
+              <text x="16" y="22" fill="#818cf8" font-family="monospace" font-size="10" font-weight="700">DOM BYPASS KERNEL // HOOKS ACTIVE</text>
+              <circle cx="440" cy="18" r="4" fill="#22c55e"/>
+              <g font-family="monospace" font-size="10.5">
+                <text x="16" y="44" fill="#22c55e">✓ document.visibilityState</text>
+                <text x="310" y="44" fill="#94a3b8">-&gt; "visible"</text>
+                <text x="16" y="64" fill="#22c55e">✓ window.hasFocus()</text>
+                <text x="310" y="64" fill="#94a3b8">-&gt; true</text>
+                <text x="16" y="84" fill="#22c55e">✓ blur_event_suppressed</text>
+                <text x="310" y="84" fill="#38bdf8">count: 312</text>
+                <text x="16" y="104" fill="#818cf8">&gt; proctoring_checks_bypassed: 100%</text>
+              </g>
+            </svg>
+          </div>
           <div>
             <div class="proj-top">
               <span class="proj-repo">03 // senatsop/CANVAS-LMS-BYPASS</span>
@@ -946,6 +1082,20 @@
 
         <article class="glass proj-card reveal" data-tilt data-col-parallax="18" data-category="tools">
           <div class="proj-glare"></div>
+          <div class="proj-viewport">
+            <svg class="proj-viewport-svg" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="460" height="120" fill="#050917"/>
+              <text x="16" y="22" fill="#c084fc" font-family="monospace" font-size="10" font-weight="700">DISCORD AGENT CONTROLLER</text>
+              <rect x="360" y="10" width="86" height="18" rx="9" fill="rgba(34,197,94,0.15)" stroke="rgba(34,197,94,0.4)"/>
+              <text x="403" y="22" fill="#4ade80" font-family="monospace" font-size="9" font-weight="700" text-anchor="middle">ONLINE</text>
+              <g font-family="monospace" font-size="10.5">
+                <text x="16" y="46" fill="#94a3b8"><tspan fill="#38bdf8">@senatsop:</tspan> /agent task: "ship loadwise ocr"</text>
+                <text x="16" y="68" fill="#c084fc">🤖 Antigravity Bot: [DISPATCHED] Subagent init</text>
+                <text x="16" y="90" fill="#2dd4bf">✓ Build: PASS · Tests: 42/42 · Latency: 16ms</text>
+                <text x="16" y="108" fill="#64748b">&gt; channel: #general-vibes [HEARTBEAT 1s]</text>
+              </g>
+            </svg>
+          </div>
           <div>
             <div class="proj-top">
               <span class="proj-repo">04 // senatsop/antigravity-discord-controller</span>
@@ -962,6 +1112,27 @@
 
         <a class="glass proj-card reveal" data-tilt data-col-parallax="-18" data-category="public" href="https://github.com/senatsop/IM-Project" target="_blank" rel="noopener">
           <div class="proj-glare"></div>
+          <div class="proj-viewport">
+            <svg class="proj-viewport-svg" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <radialGradient id="im-radar-glow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/>
+                </radialGradient>
+              </defs>
+              <circle cx="230" cy="60" r="50" fill="url(#im-radar-glow)" stroke="rgba(45,212,191,0.2)" stroke-width="1"/>
+              <circle cx="230" cy="60" r="32" fill="none" stroke="rgba(45,212,191,0.3)" stroke-width="1"/>
+              <circle cx="230" cy="60" r="14" fill="none" stroke="rgba(45,212,191,0.4)" stroke-width="1"/>
+              <line x1="160" y1="60" x2="300" y2="60" stroke="rgba(45,212,191,0.2)" stroke-width="1"/>
+              <line x1="230" y1="10" x2="230" y2="110" stroke="rgba(45,212,191,0.2)" stroke-width="1"/>
+              <circle cx="210" cy="46" r="4.5" fill="#2dd4bf"/>
+              <circle cx="255" cy="74" r="4" fill="#38bdf8"/>
+              <circle cx="195" cy="78" r="3.5" fill="#f59e0b"/>
+              <text x="16" y="22" fill="#2dd4bf" font-family="monospace" font-size="10" font-weight="700">CAMPUS ITEM LOCATOR</text>
+              <text x="444" y="22" fill="#38bdf8" font-family="monospace" font-size="9.5" text-anchor="end">ITEMS: 89</text>
+              <text x="16" y="108" fill="#94a3b8" font-family="monospace" font-size="9.5">&gt; LOCATIONS: ENG BLDG · LIBRARY · GYM</text>
+            </svg>
+          </div>
           <div>
             <div class="proj-top">
               <span class="proj-repo">05 // senatsop/IM-Project</span>
@@ -978,6 +1149,23 @@
 
         <a class="glass proj-card reveal" data-tilt data-col-parallax="18" data-category="public" href="https://github.com/senatsop/clash-royale" target="_blank" rel="noopener">
           <div class="proj-glare"></div>
+          <div class="proj-viewport">
+            <svg class="proj-viewport-svg" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="460" height="120" fill="#040b1a"/>
+              <rect x="0" y="52" width="460" height="16" fill="rgba(56,189,248,0.25)"/>
+              <rect x="120" y="46" width="36" height="28" rx="3" fill="#334155" stroke="#64748b"/>
+              <rect x="304" y="46" width="36" height="28" rx="3" fill="#334155" stroke="#64748b"/>
+              <rect x="116" y="12" width="44" height="24" rx="4" fill="#dc2626" stroke="#f87171"/>
+              <rect x="300" y="12" width="44" height="24" rx="4" fill="#dc2626" stroke="#f87171"/>
+              <rect x="116" y="84" width="44" height="24" rx="4" fill="#2563eb" stroke="#60a5fa"/>
+              <rect x="300" y="84" width="44" height="24" rx="4" fill="#2563eb" stroke="#60a5fa"/>
+              <circle cx="210" cy="50" r="5" fill="#f97316"/>
+              <line x1="150" y1="78" x2="210" y2="50" stroke="#f97316" stroke-width="2" stroke-dasharray="3 3"/>
+              <text x="16" y="22" fill="#38bdf8" font-family="monospace" font-size="10" font-weight="700">BROWSER COMBAT ARENA</text>
+              <text x="444" y="22" fill="#f87171" font-family="monospace" font-size="9.5" text-anchor="end">LIVE COMBAT</text>
+              <text x="444" y="108" fill="#38bdf8" font-family="monospace" font-size="9.5" text-anchor="end">ELIXIR: 10/10</text>
+            </svg>
+          </div>
           <div>
             <div class="proj-top">
               <span class="proj-repo">06 // senatsop/clash-royale</span>
@@ -994,11 +1182,84 @@
       </div>
     </section>
 
-    <!-- DEPTH 04: LIVE SYSTEM TELEMETRY -->
+    <!-- DEPTH 04: EXPERIMENTAL TRIAL LAB (TRIED LANGUAGES) -->
+    <section class="section" id="tried">
+      <div class="sec-head reveal">
+        <div>
+          <div class="sec-code">DEPTH // 04 — EXPERIMENTAL TRIAL LAB</div>
+          <h2 class="sec-title">Languages attempted while vibecoding.</h2>
+        </div>
+        <span class="mono-tag" style="color: #f87171; border-color: rgba(239,68,68,0.4)">SURVIVAL RATE: 0% · COMPILER CRASHES: 100%</span>
+      </div>
+
+      <div class="tried-grid">
+        <article class="glass tried-card reveal" data-tilt data-col-parallax="-14">
+          <div class="tried-top">
+            <span class="tried-name" style="color: #ef4444">C</span>
+            <span class="tried-pill" style="color: #ef4444; border-color: rgba(239,68,68,0.4)">SEGFAULT</span>
+          </div>
+          <p class="tried-log">malloc() returned null, dereferenced pointer anyway in 4 seconds flat.</p>
+          <div class="tried-meter"><span>SURVIVAL</span><span style="color: #ef4444">0%</span></div>
+          <div class="track"><div class="fill" data-width="0" style="background: #ef4444"></div></div>
+        </article>
+
+        <article class="glass tried-card reveal" data-tilt data-col-parallax="14">
+          <div class="tried-top">
+            <span class="tried-name" style="color: #38bdf8">Python</span>
+            <span class="tried-pill" style="color: #38bdf8; border-color: rgba(56,189,248,0.4)">INDENT HELL</span>
+          </div>
+          <p class="tried-log">Mixed 3 spaces and 1 tab, completely destroyed a 500-line script.</p>
+          <div class="tried-meter"><span>SURVIVAL</span><span style="color: #38bdf8">0%</span></div>
+          <div class="track"><div class="fill" data-width="0" style="background: #38bdf8"></div></div>
+        </article>
+
+        <article class="glass tried-card reveal" data-tilt data-col-parallax="-14">
+          <div class="tried-top">
+            <span class="tried-name" style="color: #f97316">C++</span>
+            <span class="tried-pill" style="color: #f97316; border-color: rgba(249,115,22,0.4)">TEMPLATE CRASH</span>
+          </div>
+          <p class="tried-log">6,000-line error log after missing one semicolon in std::vector&lt;int&gt;.</p>
+          <div class="tried-meter"><span>SURVIVAL</span><span style="color: #f97316">0%</span></div>
+          <div class="track"><div class="fill" data-width="0" style="background: #f97316"></div></div>
+        </article>
+
+        <article class="glass tried-card reveal" data-tilt data-col-parallax="14">
+          <div class="tried-top">
+            <span class="tried-name" style="color: #fb923c">Rust</span>
+            <span class="tried-pill" style="color: #fb923c; border-color: rgba(251,146,60,0.4)">BORROW DENIED</span>
+          </div>
+          <p class="tried-log">Fought the borrow checker for 3 hours, lost 0-1, went back to TypeScript.</p>
+          <div class="tried-meter"><span>SURVIVAL</span><span style="color: #fb923c">0%</span></div>
+          <div class="track"><div class="fill" data-width="0" style="background: #fb923c"></div></div>
+        </article>
+
+        <article class="glass tried-card reveal" data-tilt data-col-parallax="-14">
+          <div class="tried-top">
+            <span class="tried-name" style="color: #2dd4bf">Go</span>
+            <span class="tried-pill" style="color: #2dd4bf; border-color: rgba(45,212,191,0.4)">GOROUTINE LEAK</span>
+          </div>
+          <p class="tried-log">Forgot to close an unbuffered channel, spawned 800 silent ghost routines.</p>
+          <div class="tried-meter"><span>SURVIVAL</span><span style="color: #2dd4bf">0%</span></div>
+          <div class="track"><div class="fill" data-width="0" style="background: #2dd4bf"></div></div>
+        </article>
+
+        <article class="glass tried-card reveal" data-tilt data-col-parallax="14">
+          <div class="tried-top">
+            <span class="tried-name" style="color: #eab308">Java</span>
+            <span class="tried-pill" style="color: #eab308; border-color: rgba(234,179,8,0.4)">FACTORY HELL</span>
+          </div>
+          <p class="tried-log">AbstractSingletonServiceProxyFactoryDecorator before writing one print.</p>
+          <div class="tried-meter"><span>SURVIVAL</span><span style="color: #eab308">0%</span></div>
+          <div class="track"><div class="fill" data-width="0" style="background: #eab308"></div></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- DEPTH 05: LIVE SYSTEM TELEMETRY -->
     <section class="section" id="telemetry">
       <div class="sec-head reveal">
         <div>
-          <div class="sec-code">DEPTH // 04 — LIVE SYSTEM TELEMETRY</div>
+          <div class="sec-code">DEPTH // 05 — LIVE SYSTEM TELEMETRY</div>
           <h2 class="sec-title">Operational metrics.</h2>
         </div>
         <span class="mono-tag" id="pingReadout">PING: 18ms · SIGNAL: 99.8%</span>
@@ -1028,11 +1289,11 @@
       </div>
     </section>
 
-    <!-- DEPTH 05: TECH ARSENAL -->
+    <!-- DEPTH 06: TECH ARSENAL -->
     <section class="section" id="arsenal">
       <div class="sec-head reveal">
         <div>
-          <div class="sec-code">DEPTH // 05 — TECH ARSENAL</div>
+          <div class="sec-code">DEPTH // 06 — TECH ARSENAL</div>
           <h2 class="sec-title">Powered by vibes &amp; TypeScript.</h2>
         </div>
       </div>
@@ -1053,7 +1314,9 @@
       </div>
     </section>
 
-    <!-- DEPTH 06: SCROLL-DRIVEN WAVE FOOTER -->
+    <div class="cyber-grid-floor" aria-hidden="true"></div>
+
+    <!-- DEPTH 07: SCROLL-DRIVEN WAVE FOOTER -->
     <footer class="footer-stage">
       <svg class="wave-layer" id="wave1" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
         <path d="M0 72 Q240 20 480 72 T960 72 T1440 72 L1440 160 L0 160 Z" fill="rgba(56,189,248,0.14)"/>
@@ -1097,6 +1360,7 @@
           <span class="term-chip" data-cmd="claude">claude</span>
           <span class="term-chip" data-cmd="codex">codex</span>
           <span class="term-chip" data-cmd="vibe">vibe</span>
+          <span class="term-chip" data-cmd="tried">tried</span>
           <span class="term-chip" data-cmd="sakay">sakay</span>
           <span class="term-chip" data-cmd="loadwise">loadwise</span>
           <span class="term-chip" data-cmd="canvas">canvas</span>
@@ -1507,10 +1771,11 @@
       });
 
       const COMMANDS = {
-        help: 'Commands: vibe, claude, codex, sakay, loadwise, canvas, skills, repos, clear',
+        help: 'Commands: vibe, claude, codex, tried, sakay, loadwise, canvas, skills, repos, clear',
         vibe: 'Status: 100% pure vibecoding with Claude & Codex. 0% skill needed. Prompt + Ship.',
         claude: 'Claude: Spatial UI architecture, complex logic pairing, and prompt engineering.',
         codex: 'Codex: Autonomous terminal automation, CLI tooling, and speed coding.',
+        tried: 'Tried during vibecoding: C (segfault in 4s), Python (tabs vs spaces disaster), C++ (template hell), Rust (borrow checker undefeated), Go (goroutine leak), Java (AbstractFactory overload). Survival rate: 0%.',
         sakay: 'sakay (SAKAY360): Bohol public transit routing platform · TypeScript [76%]',
         loadwise: 'loadwise: Constraint-based student academic load manager & OCR studio · TypeScript [88%]',
         canvas: 'canvas lms injector: Tab switch & window focus simulator for LMS testing · JS [94%]',
