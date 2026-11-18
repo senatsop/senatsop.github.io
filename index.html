@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>senatsop — Vibecoder With No Skills</title>
+  <meta name="description" content="senatsop — Vibecoder With No Skills. Scroll-driven 3D parallax portfolio featuring sakay, antigravity-discord-controller, loadwise, and IM-Project." />
+  <link rel="icon" href="https://github.com/senatsop.png" />
+  <style>
+    :root {
+      --bg-deep: #040712;
+      --bg-mid: #0a1124;
+      --bg-card: rgba(10, 17, 36, 0.72);
+      --border: rgba(148, 163, 184, 0.2);
+      --border-bright: rgba(56, 189, 248, 0.45);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --dim: #64748b;
+      --cyan: #38bdf8;
+      --indigo: #818cf8;
+      --mint: #2dd4bf;
+      --violet: #c084fc;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, Arial, sans-serif;
+      --mono: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; background: var(--bg-deep); color: var(--text); font-family: var(--sans); }
+    body { overflow-x: hidden; background: var(--bg-deep); line-height: 1.55; }
+    a { color: inherit; text-decoration: none; }
+
+    /* Top scroll progress bar */
+    .progress-bar {
+      position: fixed; top: 0; left: 0; height: 2.5px; width: 100%;
+      transform-origin: left center; transform: scaleX(0);
+      background: linear-gradient(90deg, var(--cyan), var(--indigo), var(--mint));
+      z-index: 100; will-change: transform;
+    }
+
+    /* Floating HUD Nav */
+    .nav {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      width: min(1120px, calc(100% - 28px));
+      padding: 10px 18px; border-radius: 999px;
+      background: rgba(6, 11, 24, 0.72);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      z-index: 90;
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 13px; font-weight: 700; }
+    .dot-live {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--mint);
+      box-shadow: 0 0 12px var(--mint); animation: pulse 2.2s ease-in-out infinite;
+    }
+    .nav-links { display: flex; align-items: center; gap: 20px; font-size: 13px; color: var(--muted); }
+    .nav-links a:hover { color: var(--text); }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .depth-readout {
+      font-family: var(--mono); font-size: 11px; color: var(--cyan);
+      padding: 4px 10px; border-radius: 999px;
+      background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .btn-gh {
+      font-family: var(--mono); font-size: 12px; font-weight: 700;
+      padding: 6px 14px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--indigo)); color: #040712;
+      transition: transform 0.2s ease, filter 0.2s ease;
+    }
+    .btn-gh:hover { transform: translateY(-1px); filter: brightness(1.08); }
+
+    /* Fixed starfield canvas behind everything */
+    #stars { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+
+    /* Mouse-reactive ambient spotlight */
+    .cursor-glow {
+      position: fixed; width: 520px; height: 520px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.12), rgba(129, 140, 248, 0.05) 45%, transparent 70%);
+      pointer-events: none; z-index: 1; transform: translate(-50%, -50%);
+      will-change: left, top;
+    }
+
+    /* ================= HERO PARALLAX STAGE ================= */
+    .hero {
+      position: relative; height: 108vh; min-height: 700px; max-height: 1120px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; z-index: 2;
+      background: radial-gradient(ellipse at 20% 20%, rgba(56, 189, 248, 0.16), transparent 55%),
+                  radial-gradient(ellipse at 82% 24%, rgba(129, 140, 248, 0.18), transparent 52%),
+                  linear-gradient(180deg, #040712 0%, #091229 65%, #040712 100%);
+    }
+
+    .p-layer {
+      position: absolute; inset: 0; pointer-events: none; will-change: transform;
+    }
+
+    /* Eclipse Sun that sets behind mountains on scroll */
+    .eclipse-wrap {
+      display: flex; align-items: center; justify-content: center;
+      padding-top: 8vh;
+    }
+    .eclipse {
+      width: min(340px, 56vw); aspect-ratio: 1; border-radius: 50%;
+      background: radial-gradient(circle, rgba(224, 242, 254, 0.9) 0%, rgba(56, 189, 248, 0.48) 38%, rgba(129, 140, 248, 0.15) 68%, transparent 74%);
+      box-shadow: 0 0 120px rgba(56, 189, 248, 0.45), 0 0 220px rgba(129, 140, 248, 0.28);
+      position: relative;
+    }
+    .eclipse::after {
+      content: ""; position: absolute; inset: -24px; border-radius: 50%;
+      border: 1px dashed rgba(56, 189, 248, 0.32);
+      animation: spin 34s linear infinite;
+    }
+
+    /* Parallax mountain layers */
+    .ridge-svg {
+      position: absolute; bottom: -2px; left: 0; width: 100%; height: 56%;
+      display: block;
+    }
+
+    /* Hero Foreground Lockup */
+    .hero-content {
+      position: relative; z-index: 10; text-align: center;
+      width: min(760px, calc(100% - 32px));
+      padding-bottom: 10vh; will-change: transform, opacity;
+    }
+    .avatar-ring {
+      width: 96px; height: 96px; margin: 0 auto 18px; border-radius: 50%;
+      padding: 3px; background: linear-gradient(135deg, var(--cyan), var(--indigo), var(--mint));
+      box-shadow: 0 0 42px rgba(56, 189, 248, 0.45);
+    }
+    .avatar-ring img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+      display: block; border: 3px solid var(--bg-deep);
+    }
+    .status-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 999px; margin-bottom: 18px;
+      font-family: var(--mono); font-size: 11.5px; font-weight: 700; letter-spacing: 1.4px;
+      color: var(--mint); background: rgba(45, 212, 191, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.4);
+      backdrop-filter: blur(8px);
+    }
+    .hero-title {
+      font-size: clamp(3.2rem, 8vw, 6.2rem); font-weight: 900;
+      letter-spacing: -0.04em; line-height: 0.98;
+      background: linear-gradient(95deg, #ffffff 0%, #bae6fd 52%, #c7d2fe 100%);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      filter: drop-shadow(0 8px 28px rgba(56, 189, 248, 0.25));
+    }
+    .hero-role {
+      margin-top: 14px; font-family: var(--mono);
+      font-size: clamp(1rem, 2.3vw, 1.35rem); font-weight: 700;
+      color: var(--cyan); letter-spacing: 0.04em;
+    }
+    .hero-sub {
+      margin: 16px auto 0; max-width: 580px; color: var(--muted);
+      font-size: clamp(0.96rem, 1.7vw, 1.08rem);
+    }
+    .scroll-cue {
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      z-index: 12; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-family: var(--mono); font-size: 10.5px; letter-spacing: 2px; color: var(--muted);
+    }
+    .scroll-chev {
+      width: 14px; height: 14px; border-right: 2px solid var(--mint); border-bottom: 2px solid var(--mint);
+      transform: rotate(45deg); animation: bounce 1.8s ease-in-out infinite;
+    }
+
+    /* ================= CONTENT SECTIONS ================= */
+    main { position: relative; z-index: 5; background: linear-gradient(180deg, #040712 0%, #070d1e 50%, #040712 100%); }
+    .section {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto; padding: 110px 0 40px;
+      position: relative;
+    }
+    .sec-head { margin-bottom: 42px; }
+    .sec-code {
+      font-family: var(--mono); font-size: 11.5px; font-weight: 700;
+      letter-spacing: 1.8px; color: var(--cyan); text-transform: uppercase;
+    }
+    .sec-title {
+      font-size: clamp(1.9rem, 4vw, 2.9rem); font-weight: 800;
+      letter-spacing: -0.03em; margin-top: 6px;
+    }
+
+    /* Bento Grid with Parallax Columns */
+    .bento {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .glass {
+      background: var(--bg-card);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 26px; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      position: relative; overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      transition: border-color 0.25s ease;
+    }
+    .glass::before {
+      content: ""; position: absolute; top: 0; left: 20px; right: 20px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    }
+    .glass:hover { border-color: var(--border-bright); }
+    .card-kicker {
+      font-family: var(--mono); font-size: 11px; font-weight: 700;
+      letter-spacing: 1.4px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .focus-list { list-style: none; display: grid; gap: 14px; }
+    .focus-list li { display: flex; align-items: center; gap: 12px; font-size: 14.5px; }
+    .num-pill {
+      width: 26px; height: 26px; flex: none; border-radius: 8px;
+      display: grid; place-items: center; font-family: var(--mono); font-size: 11px; font-weight: 700;
+      color: var(--mint); background: rgba(45, 212, 191, 0.12); border: 1px solid rgba(45, 212, 191, 0.35);
+    }
+    .lab-title { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 6px; }
+    .cursor { display: inline-block; width: 9px; height: 22px; background: var(--mint); border-radius: 2px; animation: blink 1s steps(2, start) infinite; }
+    .lab-desc { color: var(--muted); font-size: 14px; margin: 10px 0 14px; }
+    .mono-tag { font-family: var(--mono); font-size: 11.5px; color: var(--dim); }
+
+    .meter { margin-bottom: 18px; }
+    .meter:last-child { margin-bottom: 0; }
+    .meter-top {
+      display: flex; justify-content: space-between;
+      font-family: var(--mono); font-size: 11.5px; font-weight: 700; margin-bottom: 8px;
+    }
+    .meter-top span:first-child { color: var(--muted); }
+    .track { height: 8px; border-radius: 999px; background: rgba(148, 163, 184, 0.16); overflow: hidden; }
+    .fill {
+      height: 100%; border-radius: 999px; width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--indigo), var(--mint));
+      transition: width 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* Featured Builds 2x2 with 3D Tilt + Scroll Offset */
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px;
+      perspective: 1100px;
+    }
+    .proj-card {
+      transform-style: preserve-3d; will-change: transform;
+      display: flex; flex-direction: column; justify-content: space-between; min-height: 228px;
+    }
+    .proj-glare {
+      position: absolute; inset: 0; pointer-events: none; opacity: 0;
+      background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(56, 189, 248, 0.2), transparent 55%);
+      transition: opacity 0.25s ease;
+    }
+    .proj-card:hover .proj-glare { opacity: 1; }
+    .proj-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .proj-repo { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+    .badge {
+      font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.9px;
+      padding: 4px 10px; border-radius: 999px;
+      border: 1px solid currentColor; background: rgba(4, 7, 18, 0.6);
+    }
+    .proj-name { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .proj-desc { color: var(--muted); font-size: 14.5px; margin-bottom: 20px; }
+    .proj-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-family: var(--mono); font-size: 11.5px; }
+    .vis-tag { color: var(--dim); }
+    .open-link { color: var(--cyan); font-weight: 700; }
+    .open-link:hover { text-decoration: underline; }
+
+    /* Tech Arsenal Chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 12px; }
+    .chip {
+      font-family: var(--mono); font-size: 13px; font-weight: 600;
+      padding: 10px 18px; border-radius: 12px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .chip:hover {
+      transform: translateY(-3px); border-color: var(--cyan);
+      box-shadow: 0 10px 26px rgba(56, 189, 248, 0.2);
+    }
+    .chip.highlight {
+      color: var(--mint); border-color: rgba(45, 212, 191, 0.45);
+      background: rgba(45, 212, 191, 0.1);
+    }
+
+    /* Scroll-driven Parallax Wave Footer */
+    .footer-stage {
+      position: relative; margin-top: 90px; padding: 120px 20px 56px;
+      overflow: hidden; text-align: center;
+      border-top: 1px solid var(--border);
+      background: linear-gradient(180deg, #040712 0%, #09132b 100%);
+    }
+    .wave-layer {
+      position: absolute; bottom: 0; left: -25%; width: 150%; height: 140px;
+      pointer-events: none; will-change: transform;
+    }
+    .footer-inner { position: relative; z-index: 4; }
+    .footer-note { font-size: 17px; font-weight: 600; margin: 14px 0 8px; }
+    .footer-links {
+      display: flex; justify-content: center; gap: 22px; margin-top: 16px;
+      font-family: var(--mono); font-size: 12.5px; color: var(--cyan);
+    }
+    .footer-links a:hover { text-decoration: underline; }
+
+    /* Scroll Reveal */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+    .reveal.in { opacity: 1; transform: translateY(0); transition: opacity 0.7s ease, border-color 0.25s ease; }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes bounce { 0%, 100% { transform: translateY(0) rotate(45deg); } 50% { transform: translateY(7px) rotate(45deg); } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    @media (max-width: 860px) {
+      .nav-links, .depth-readout { display: none; }
+      .bento, .projects-grid { grid-template-columns: 1fr; }
+      .section { padding: 72px 0 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1 !important; transform: none !important; }
+      .cursor-glow { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+  <header class="nav">
+    <a class="brand" href="#top"><span class="dot-live"></span>@senatsop</a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="#signal">Signal</a>
+      <a href="#builds">Builds</a>
+      <a href="#arsenal">Arsenal</a>
+    </nav>
+    <div class="nav-right">
+      <span class="depth-readout" id="depthReadout">DEPTH 0000m</span>
+      <a class="btn-gh" href="https://github.com/senatsop" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </header>
+
+  <!-- TRUE 6-LAYER SCROLL PARALLAX HERO -->
+  <section class="hero" id="top">
+    <!-- Layer 1: Eclipse Sun (sets behind mountains on scroll) -->
+    <div class="p-layer eclipse-wrap" data-scroll-speed="0.58">
+      <div class="eclipse"></div>
+    </div>
+
+    <!-- Layer 2: Far Ridge (slow) -->
+    <div class="p-layer" data-scroll-speed="0.18">
+      <svg class="ridge-svg" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 240 Q180 120 380 210 T780 185 T1140 225 T1440 165 L1440 420 L0 420 Z" fill="#0f1a36" opacity="0.92"/>
+        <path d="M0 240 Q180 120 380 210 T780 185 T1140 225 T1440 165" fill="none" stroke="rgba(129,140,248,0.38)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <!-- Layer 3: Mid Ridge (medium) -->
+    <div class="p-layer" data-scroll-speed="0.34">
+      <svg class="ridge-svg" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 285 Q240 190 500 265 T980 230 T1440 270 L1440 420 L0 420 Z" fill="#0a1329" opacity="0.96"/>
+        <path d="M0 285 Q240 190 500 265 T980 230 T1440 270" fill="none" stroke="rgba(56,189,248,0.48)" stroke-width="2"/>
+      </svg>
+    </div>
+
+    <!-- Layer 4: Near Foreground Ridge (anchors into main canvas) -->
+    <div class="p-layer" data-scroll-speed="0.06">
+      <svg class="ridge-svg" viewBox="0 0 1440 420" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 345 Q300 268 620 332 T1160 302 T1440 340 L1440 420 L0 420 Z" fill="#040712"/>
+        <path d="M0 345 Q300 268 620 332 T1160 302 T1440 340" fill="none" stroke="rgba(45,212,191,0.52)" stroke-width="2.2"/>
+      </svg>
+    </div>
+
+    <!-- Hero Foreground Lockup -->
+    <div class="hero-content" id="heroContent">
+      <div class="avatar-ring">
+        <img src="https://github.com/senatsop.png" alt="senatsop avatar" />
+      </div>
+      <div class="status-pill"><span class="dot-live"></span>VIBECODING · NO SKILLS</div>
+      <h1 class="hero-title">senatsop</h1>
+      <p class="hero-role">Vibecoder With No Skills</p>
+      <p class="hero-sub">Turning prompts, chaos, and late-night ideas into shipped transit platforms, Discord bots, smart schedulers, and web apps anyway.</p>
+    </div>
+
+    <div class="scroll-cue" id="scrollCue">
+      <span>SCROLL TO DESCEND</span>
+      <span class="scroll-chev"></span>
+    </div>
+  </section>
+
+  <main>
+    <!-- DEPTH 02: PARALLAX BENTO -->
+    <section class="section" id="signal">
+      <div class="sec-head reveal">
+        <div class="sec-code">DEPTH // 02 — SIGNAL &amp; MATRIX</div>
+        <h2 class="sec-title">Zero skills. Maximum shipping.</h2>
+      </div>
+
+      <div class="bento">
+        <article class="glass reveal" data-col-parallax="-22">
+          <div class="card-kicker" style="color: var(--cyan)"><span>01 // CORE FOCUS</span><span class="dot-live" style="background:var(--cyan);box-shadow:0 0 10px var(--cyan)"></span></div>
+          <ul class="focus-list">
+            <li><span class="num-pill">1</span><span>Pure Vibecoding With No Skills</span></li>
+            <li><span class="num-pill">2</span><span>Smart Web &amp; Transit Platforms</span></li>
+            <li><span class="num-pill">3</span><span>Antigravity IDE × Discord Bots</span></li>
+          </ul>
+        </article>
+
+        <article class="glass reveal" data-col-parallax="0">
+          <div class="card-kicker" style="color: var(--mint)"><span>02 // IN THE LAB</span><span class="dot-live"></span></div>
+          <div class="lab-title">loadwise <span class="cursor" aria-hidden="true"></span></div>
+          <p class="lab-desc">Multi-institution academic load manager, constraint-based scheduling engine, OCR school-load reader, and timetable studio.</p>
+          <div class="mono-tag">TypeScript · OCR · Scheduling</div>
+          <div class="meter" style="margin-top:16px">
+            <div class="meter-top"><span>SHIP PROGRESS</span><span style="color:var(--mint)">88%</span></div>
+            <div class="track"><div class="fill" data-width="88"></div></div>
+          </div>
+        </article>
+
+        <article class="glass reveal" data-col-parallax="22">
+          <div class="card-kicker" style="color: var(--indigo)"><span>03 // CRAFT MATRIX</span><span class="dot-live" style="background:var(--indigo);box-shadow:0 0 10px var(--indigo)"></span></div>
+          <div class="meter">
+            <div class="meter-top"><span>VIBECODING</span><span>100%</span></div>
+            <div class="track"><div class="fill" data-width="100"></div></div>
+          </div>
+          <div class="meter">
+            <div class="meter-top"><span>SHIPPING ANYWAY</span><span>96%</span></div>
+            <div class="track"><div class="fill" data-width="96"></div></div>
+          </div>
+          <div class="meter">
+            <div class="meter-top"><span>ACTUAL SKILLS</span><span>0%</span></div>
+            <div class="track"><div class="fill" data-width="0"></div></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- DEPTH 03: FEATURED BUILDS (3D TILT + SCROLL PARALLAX) -->
+    <section class="section" id="builds">
+      <div class="sec-head reveal">
+        <div class="sec-code">DEPTH // 03 — FEATURED BUILDS</div>
+        <h2 class="sec-title">Pinned in the lab.</h2>
+      </div>
+
+      <div class="projects-grid">
+        <article class="glass proj-card reveal" data-tilt data-col-parallax="-18">
+          <div class="proj-glare"></div>
+          <div>
+            <div class="proj-top">
+              <span class="proj-repo">01 // senatsop/sakay</span>
+              <span class="badge" style="color: var(--cyan)">SAKAY360</span>
+            </div>
+            <h3 class="proj-name">sakay</h3>
+            <p class="proj-desc">SAKAY360: Bohol Province-wide intelligent public transportation information and journey planning platform.</p>
+          </div>
+          <div class="proj-foot">
+            <span style="color: var(--cyan)">TypeScript · Transit · Maps</span>
+            <span class="vis-tag">PRIVATE REPO</span>
+          </div>
+        </article>
+
+        <article class="glass proj-card reveal" data-tilt data-col-parallax="18">
+          <div class="proj-glare"></div>
+          <div>
+            <div class="proj-top">
+              <span class="proj-repo">02 // senatsop/antigravity-discord-controller</span>
+              <span class="badge" style="color: var(--mint)">DISCORD BOT</span>
+            </div>
+            <h3 class="proj-name">antigravity-discord-controller</h3>
+            <p class="proj-desc">Antigravity IDE × Discord remote control and live notification system built for controlling workflows from Discord.</p>
+          </div>
+          <div class="proj-foot">
+            <span style="color: var(--mint)">JavaScript · Discord Bot</span>
+            <span class="vis-tag">PRIVATE REPO</span>
+          </div>
+        </article>
+
+        <article class="glass proj-card reveal" data-tilt data-col-parallax="-18">
+          <div class="proj-glare"></div>
+          <div>
+            <div class="proj-top">
+              <span class="proj-repo">03 // senatsop/loadwise</span>
+              <span class="badge" style="color: var(--indigo)">AI / OCR</span>
+            </div>
+            <h3 class="proj-name">loadwise</h3>
+            <p class="proj-desc">Multi-institution student academic load management, constraint-based scheduling engine, OCR school-load recognition, and timetable design studio.</p>
+          </div>
+          <div class="proj-foot">
+            <span style="color: var(--indigo)">TypeScript · OCR · Scheduling</span>
+            <span class="vis-tag">PRIVATE REPO</span>
+          </div>
+        </article>
+
+        <a class="glass proj-card reveal" data-tilt data-col-parallax="18" href="https://github.com/senatsop/IM-Project" target="_blank" rel="noopener">
+          <div class="proj-glare"></div>
+          <div>
+            <div class="proj-top">
+              <span class="proj-repo">04 // senatsop/IM-Project</span>
+              <span class="badge" style="color: var(--violet)">PUBLIC</span>
+            </div>
+            <h3 class="proj-name">IM-Project</h3>
+            <p class="proj-desc">Campus Lost And Found web application for reporting, browsing, and recovering lost items on campus.</p>
+          </div>
+          <div class="proj-foot">
+            <span style="color: var(--violet)">JavaScript · Web App</span>
+            <span class="open-link">OPEN REPO ↗</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- DEPTH 04: TECH ARSENAL -->
+    <section class="section" id="arsenal">
+      <div class="sec-head reveal">
+        <div class="sec-code">DEPTH // 04 — TECH ARSENAL</div>
+        <h2 class="sec-title">Powered by vibes &amp; TypeScript.</h2>
+      </div>
+
+      <div class="chips reveal">
+        <span class="chip highlight">✦ Vibecoder with no skills</span>
+        <span class="chip">TypeScript</span>
+        <span class="chip">JavaScript</span>
+        <span class="chip">HTML5</span>
+        <span class="chip">CSS3</span>
+        <span class="chip">Web Apps</span>
+        <span class="chip">Discord Bots</span>
+        <span class="chip">SVG Motion</span>
+        <span class="chip">Git &amp; GitHub</span>
+        <span class="chip">Antigravity IDE</span>
+      </div>
+    </section>
+
+    <!-- DEPTH 05: SCROLL-DRIVEN WAVE FOOTER -->
+    <footer class="footer-stage">
+      <svg class="wave-layer" id="wave1" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 72 Q240 20 480 72 T960 72 T1440 72 L1440 160 L0 160 Z" fill="rgba(56,189,248,0.14)"/>
+      </svg>
+      <svg class="wave-layer" id="wave2" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 95 Q240 45 480 95 T960 95 T1440 95 L1440 160 L0 160 Z" fill="rgba(129,140,248,0.18)"/>
+      </svg>
+      <svg class="wave-layer" id="wave3" viewBox="0 0 1440 160" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 116 Q240 76 480 116 T960 116 T1440 116 L1440 160 L0 160 Z" fill="rgba(45,212,191,0.2)"/>
+      </svg>
+
+      <div class="footer-inner">
+        <span class="dot-live" style="display:inline-block"></span>
+        <p class="footer-note">lowkey, I like her :( &nbsp;·&nbsp; vibecoder with no skills</p>
+        <p class="mono-tag">@senatsop · he/him</p>
+        <div class="footer-links">
+          <a href="https://github.com/senatsop" target="_blank" rel="noopener">github.com/senatsop ↗</a>
+          <a href="https://gokgokgok.com" target="_blank" rel="noopener">gokgokgok.com ↗</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+      // 1. Starfield Canvas with scroll-linked vertical parallax
+      const canvas = document.getElementById('stars');
+      const ctx = canvas.getContext('2d');
+      let W = 0, H = 0, stars = [];
+
+      function resizeStars() {
+        W = canvas.width = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+        const count = Math.min(140, Math.floor((W * H) / 11000));
+        stars = Array.from({ length: count }, () => ({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: 0.5 + Math.random() * 1.4,
+          depth: 0.08 + Math.random() * 0.28,
+          alpha: 0.22 + Math.random() * 0.65,
+          phase: Math.random() * Math.PI * 2,
+        }));
+      }
+      resizeStars();
+      window.addEventListener('resize', resizeStars, { passive: true });
+
+      // 2. Smooth Lerp Scroll-Parallax Engine
+      let targetY = window.scrollY;
+      let currentY = targetY;
+      const heroLayers = [...document.querySelectorAll('[data-scroll-speed]')];
+      const colCards = [...document.querySelectorAll('[data-col-parallax]')];
+      const heroContent = document.getElementById('heroContent');
+      const scrollCue = document.getElementById('scrollCue');
+      const progressBar = document.getElementById('progressBar');
+      const depthReadout = document.getElementById('depthReadout');
+      const wave1 = document.getElementById('wave1');
+      const wave2 = document.getElementById('wave2');
+      const wave3 = document.getElementById('wave3');
+
+      window.addEventListener('scroll', () => { targetY = window.scrollY; }, { passive: true });
+
+      function tick(now) {
+        currentY += (targetY - currentY) * (reducedMotion ? 1 : 0.11);
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const ratio = Math.min(1, Math.max(0, currentY / maxScroll));
+
+        progressBar.style.transform = `scaleX(${ratio.toFixed(4)})`;
+        depthReadout.textContent = `DEPTH ${String(Math.round(ratio * 1000)).padStart(4, '0')}m`;
+
+        // Draw parallax stars
+        ctx.clearRect(0, 0, W, H);
+        const t = now * 0.0012;
+        for (const s of stars) {
+          const py = ((s.y - currentY * s.depth) % H + H) % H;
+          const twinkle = reducedMotion ? 1 : 0.72 + 0.28 * Math.sin(t + s.phase);
+          ctx.fillStyle = `rgba(226, 232, 240, ${(s.alpha * twinkle).toFixed(3)})`;
+          ctx.beginPath();
+          ctx.arc(s.x, py, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (!reducedMotion) {
+          // Hero multi-plane vertical parallax
+          for (const el of heroLayers) {
+            const speed = Number(el.dataset.scrollSpeed);
+            el.style.transform = `translate3d(0, ${(currentY * speed).toFixed(1)}px, 0)`;
+          }
+          const heroFade = Math.max(0, 1 - currentY / (window.innerHeight * 0.72));
+          heroContent.style.transform = `translate3d(0, ${(currentY * 0.24).toFixed(1)}px, 0)`;
+          heroContent.style.opacity = heroFade.toFixed(3);
+          scrollCue.style.opacity = Math.max(0, 1 - currentY / 180).toFixed(3);
+
+          // Desktop column scroll-parallax offset
+          if (window.innerWidth > 860) {
+            const vh = window.innerHeight;
+            for (const card of colCards) {
+              const rect = card.getBoundingClientRect();
+              const centerDelta = (rect.top + rect.height / 2 - vh / 2) / vh;
+              const strength = Number(card.dataset.colParallax);
+              if (!card.matches(':hover')) {
+                card.style.transform = `translate3d(0, ${(centerDelta * strength).toFixed(1)}px, 0)`;
+              }
+            }
+          }
+
+          // Footer opposing wave parallax driven by scroll
+          wave1.style.transform = `translate3d(${(ratio * -120).toFixed(1)}px, 0, 0)`;
+          wave2.style.transform = `translate3d(${(ratio * 150 - 75).toFixed(1)}px, 0, 0)`;
+          wave3.style.transform = `translate3d(${(ratio * -190).toFixed(1)}px, 0, 0)`;
+        }
+
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+
+      // 3. Scroll Reveal & Meter Animation
+      const observer = new IntersectionObserver((entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('in');
+          entry.target.querySelectorAll('.fill[data-width]').forEach((bar) => {
+            bar.style.width = `${bar.dataset.width}%`;
+          });
+          observer.unobserve(entry.target);
+        }
+      }, { threshold: 0.14 });
+
+      document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+      // 4. Mouse Spotlight & 3D Tilt Cards
+      if (canHover && !reducedMotion) {
+        const glow = document.getElementById('cursorGlow');
+        window.addEventListener('pointermove', (e) => {
+          glow.style.left = `${e.clientX}px`;
+          glow.style.top = `${e.clientY}px`;
+        }, { passive: true });
+
+        document.querySelectorAll('[data-tilt]').forEach((card) => {
+          card.addEventListener('pointermove', (e) => {
+            const r = card.getBoundingClientRect();
+            const px = (e.clientX - r.left) / r.width;
+            const py = (e.clientY - r.top) / r.height;
+            const rx = (0.5 - py) * 10;
+            const ry = (px - 0.5) * 12;
+            card.style.setProperty('--gx', `${(px * 100).toFixed(1)}%`);
+            card.style.setProperty('--gy', `${(py * 100).toFixed(1)}%`);
+            card.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) translateZ(6px)`;
+          });
+          card.addEventListener('pointerleave', () => {
+            card.style.transform = '';
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
