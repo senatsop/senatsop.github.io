@@ -1788,12 +1788,17 @@
           </p>
           <div class="vault-auth-box">
             <form id="vaultAuthForm" class="vault-pass-row">
-              <input type="password" class="vault-pass-field" id="vaultPassField" placeholder="Enter Operator Passcode..." autocomplete="current-password" />
+              <input type="text" class="vault-pass-field" id="vaultPassField" placeholder="Passcode: senatsop" autocomplete="current-password" value="senatsop" />
               <button type="submit" class="vault-unlock-btn" id="vaultUnlockBtn">AUTHENTICATE ↗</button>
             </form>
             <div class="vault-auth-feedback" id="vaultAuthFeedback"></div>
-            <div class="vault-auth-hint">
-              Operator Quick-Access: Use CLI <code>logs senatsop</code> or URL <code>?auth=senatsop</code>
+            <div style="margin-top: 14px;">
+              <button type="button" class="vault-unlock-btn" id="vaultQuickUnlockBtn" style="background:rgba(45,212,191,0.18); border-color:rgba(45,212,191,0.4); color:var(--mint); width:100%; font-size:12px;">
+                ⚡ ONE-CLICK OPERATOR UNLOCK (@senatsop)
+              </button>
+            </div>
+            <div class="vault-auth-hint" style="margin-top: 14px;">
+              Default Passcode: <code style="font-weight:700; color:var(--cyan); font-size:13px;">senatsop</code> (or use CLI <code>logs senatsop</code>)
             </div>
           </div>
         </div>
@@ -2729,22 +2734,47 @@ const jsCode = `
       }
 
       function verifyPasscode(input) {
-        const pin = (input || '').trim().toLowerCase();
-        return pin === 'senatsop' || pin === 'senatsop2026';
+        const pin = (input || '').trim().toLowerCase().replace(/^@/, '');
+        // Accepts senatsop, senatsop2026, admin, sop, or empty if clicking quick unlock
+        return pin === 'senatsop' || pin === 'senatsop2026' || pin === 'admin' || pin === 'sop' || pin === '';
       }
 
-      if (vaultAuthForm) {
-        vaultAuthForm.addEventListener('submit', (e) => {
-          e.preventDefault();
-          if (verifyPasscode(vaultPassField.value)) {
-            unlockVaultUI();
-          } else {
-            vaultAuthFeedback.textContent = 'Clearance denied: invalid operator passcode.';
+      function attemptUnlock() {
+        const val = vaultPassField ? vaultPassField.value : '';
+        if (verifyPasscode(val)) {
+          unlockVaultUI();
+          if (vaultAuthFeedback) vaultAuthFeedback.textContent = '';
+        } else {
+          if (vaultAuthFeedback) vaultAuthFeedback.textContent = 'Clearance denied: passcode is "senatsop"';
+          if (vaultPassField) {
             vaultPassField.style.borderColor = '#ef4444';
             setTimeout(() => {
               if (vaultPassField) vaultPassField.style.borderColor = '';
             }, 1800);
           }
+        }
+      }
+
+      if (vaultAuthForm) {
+        vaultAuthForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          attemptUnlock();
+        });
+      }
+
+      const vaultUnlockBtn = document.getElementById('vaultUnlockBtn');
+      if (vaultUnlockBtn) {
+        vaultUnlockBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          attemptUnlock();
+        });
+      }
+
+      const vaultQuickUnlockBtn = document.getElementById('vaultQuickUnlockBtn');
+      if (vaultQuickUnlockBtn) {
+        vaultQuickUnlockBtn.addEventListener('click', () => {
+          if (vaultPassField) vaultPassField.value = 'senatsop';
+          unlockVaultUI();
         });
       }
 
