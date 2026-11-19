@@ -166,6 +166,93 @@
       overflow: visible;
       filter: drop-shadow(0 0 32px rgba(56, 189, 248, 0.45));
       contain: paint;
+      animation: bh-idle-levitate 8s ease-in-out infinite alternate;
+    }
+
+    /* Black Hole Living Cosmic Animations */
+    .bh-glow-pulse {
+      animation: bh-glow-breathe 4.8s ease-in-out infinite alternate;
+      transform-origin: 450px 450px;
+    }
+    .bh-jets-anim {
+      animation: bh-jet-pulse 2.8s ease-in-out infinite alternate;
+      transform-origin: 450px 450px;
+    }
+    .bh-orbit-ring {
+      animation: bh-ring-spin 20s linear infinite;
+      transform-origin: 450px 450px;
+    }
+    .bh-lensed-upper {
+      animation: bh-arc-shimmer 3.8s ease-in-out infinite alternate;
+      transform-origin: 450px 450px;
+    }
+    .bh-lensed-lower {
+      animation: bh-arc-shimmer 4.6s ease-in-out infinite alternate-reverse;
+      transform-origin: 450px 450px;
+    }
+    .bh-photon-ring {
+      animation: bh-photon-flicker 2.2s ease-in-out infinite alternate;
+      transform-origin: 450px 450px;
+    }
+    .bh-flare-hotspot {
+      animation: bh-hotspot-pulse 2.6s ease-in-out infinite alternate;
+      transform-origin: 270px 488px;
+    }
+    .plasma-stream-1 {
+      stroke-dasharray: 90 45;
+      animation: plasma-flow-1 4.5s linear infinite;
+    }
+    .plasma-stream-2 {
+      stroke-dasharray: 70 35;
+      animation: plasma-flow-2 3.6s linear infinite;
+    }
+    .plasma-stream-3 {
+      stroke-dasharray: 110 55;
+      animation: plasma-flow-3 5.4s linear infinite;
+    }
+
+    @keyframes bh-idle-levitate {
+      0% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-6px) scale(1.008); }
+      100% { transform: translateY(4px) scale(0.995); }
+    }
+    @keyframes bh-glow-breathe {
+      0% { opacity: 0.72; transform: scale(0.96); }
+      100% { opacity: 1; transform: scale(1.05); }
+    }
+    @keyframes bh-jet-pulse {
+      0% { opacity: 0.7; transform: rotate(77.5deg) scaleY(0.94); }
+      50% { opacity: 1; transform: rotate(77.5deg) scaleY(1.07); filter: drop-shadow(0 0 16px #38bdf8); }
+      100% { opacity: 0.7; transform: rotate(77.5deg) scaleY(0.94); }
+    }
+    @keyframes bh-ring-spin {
+      0% { transform: rotate(24deg); }
+      100% { transform: rotate(384deg); }
+    }
+    @keyframes bh-arc-shimmer {
+      0% { opacity: 0.85; transform: scaleY(0.98); }
+      100% { opacity: 1; transform: scaleY(1.03); filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.75)); }
+    }
+    @keyframes bh-photon-flicker {
+      0% { opacity: 0.88; transform: scale(0.994); filter: drop-shadow(0 0 8px #ffffff); }
+      50% { opacity: 1; transform: scale(1.012); filter: drop-shadow(0 0 18px #38bdf8); }
+      100% { opacity: 0.88; transform: scale(0.994); filter: drop-shadow(0 0 8px #ffffff); }
+    }
+    @keyframes bh-hotspot-pulse {
+      0% { opacity: 0.78; transform: rotate(-12.5deg) scale(0.94); }
+      100% { opacity: 1; transform: rotate(-12.5deg) scale(1.14); filter: drop-shadow(0 0 22px #ffffff); }
+    }
+    @keyframes plasma-flow-1 {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -270; }
+    }
+    @keyframes plasma-flow-2 {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: 210; }
+    }
+    @keyframes plasma-flow-3 {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -330; }
     }
 
     /* Parallax mountain layers */
@@ -792,11 +879,11 @@
             </defs>
 
             <!-- Layer 1: Ambient Gravitational Lensing Glow -->
-            <circle cx="450" cy="450" r="430" fill="url(#bh-glow)"/>
-            <circle cx="450" cy="450" r="280" fill="url(#bh-glow)"/>
+            <circle class="bh-glow-pulse" cx="450" cy="450" r="430" fill="url(#bh-glow)"/>
+            <circle class="bh-glow-pulse" cx="450" cy="450" r="280" fill="url(#bh-glow)"/>
 
             <!-- Layer 1.5: Relativistic Polar Plasma Jets & Beam Spikes -->
-            <g class="bh-jets" transform="rotate(77.5 450 450)">
+            <g class="bh-jets bh-jets-anim" transform="rotate(77.5 450 450)">
               <!-- North Polar Jet Beam -->
               <polygon points="447,450 453,450 451,10 449,10" fill="url(#bh-jet)" opacity="0.85" filter="url(#bh-soft-blur)"/>
               <line x1="450" y1="450" x2="450" y2="20" stroke="#ffffff" stroke-width="1.8" opacity="0.95"/>
@@ -806,7 +893,7 @@
             </g>
 
             <!-- Layer 1.8: 3D Inclined Cyber Orbital Telemetry Ring with Orbiting Probes -->
-            <g transform="rotate(24 450 450)">
+            <g class="bh-orbit-ring" transform="rotate(24 450 450)">
               <ellipse cx="450" cy="450" rx="380" ry="115" fill="none" stroke="rgba(56, 189, 248, 0.35)" stroke-width="1.2" stroke-dasharray="8 6"/>
               <!-- Probe P-01 -->
               <circle cx="830" cy="450" r="5" fill="#38bdf8" filter="url(#bh-soft-blur)"/>
@@ -820,18 +907,18 @@
             <g class="bh-lensed-upper">
               <path d="M 140 450 C 140 50 760 50 760 450 C 700 450 690 275 450 275 C 210 275 200 450 140 450 Z" 
                     fill="url(#bh-arc-up)" opacity="0.92"/>
-              <path d="M 190 450 C 190 195 710 195 710 450" fill="none" stroke="#ffffff" stroke-width="2.6" opacity="0.96"/>
-              <path d="M 220 450 C 220 220 680 220 680 450" fill="none" stroke="#7dd3fc" stroke-width="3" opacity="0.8"/>
-              <path d="M 260 450 C 260 250 640 250 640 450" fill="none" stroke="#38bdf8" stroke-width="2.2" opacity="0.65"/>
-              <path d="M 300 450 C 300 275 600 275 600 450" fill="none" stroke="#818cf8" stroke-width="1.6" opacity="0.5"/>
+              <path class="plasma-stream-1" d="M 190 450 C 190 195 710 195 710 450" fill="none" stroke="#ffffff" stroke-width="2.6" opacity="0.96"/>
+              <path class="plasma-stream-2" d="M 220 450 C 220 220 680 220 680 450" fill="none" stroke="#7dd3fc" stroke-width="3" opacity="0.8"/>
+              <path class="plasma-stream-3" d="M 260 450 C 260 250 640 250 640 450" fill="none" stroke="#38bdf8" stroke-width="2.2" opacity="0.65"/>
+              <path class="plasma-stream-2" d="M 300 450 C 300 275 600 275 600 450" fill="none" stroke="#818cf8" stroke-width="1.6" opacity="0.5"/>
             </g>
 
             <!-- Layer 3: Warped Lower Accretion Arc (Einstein Lensing under the Horizon) -->
             <g class="bh-lensed-lower">
               <path d="M 160 450 C 160 840 740 840 740 450 C 680 450 670 625 450 625 C 230 625 220 450 160 450 Z" 
                     fill="url(#bh-arc-down)" opacity="0.86"/>
-              <path d="M 210 450 C 210 700 690 700 690 450" fill="none" stroke="#7dd3fc" stroke-width="2.4" opacity="0.8"/>
-              <path d="M 250 450 C 250 660 650 660 650 450" fill="none" stroke="#0284c7" stroke-width="2" opacity="0.55"/>
+              <path class="plasma-stream-2" d="M 210 450 C 210 700 690 700 690 450" fill="none" stroke="#7dd3fc" stroke-width="2.4" opacity="0.8"/>
+              <path class="plasma-stream-1" d="M 250 450 C 250 660 650 660 650 450" fill="none" stroke="#0284c7" stroke-width="2" opacity="0.55"/>
             </g>
 
             <!-- Tilted Accretion Disk Group (inclined at -12.5 degrees) -->
@@ -839,17 +926,19 @@
               <!-- Layer 4: Rear Half of Equatorial Disk (orbits behind black hole) -->
               <path d="M 20 450 A 430 100 0 0 1 880 450 L 650 450 A 200 52 0 0 0 250 450 Z" 
                     fill="url(#bh-disk-grad)" opacity="0.88"/>
-              <path d="M 50 450 A 400 92 0 0 1 850 450" fill="none" stroke="#7dd3fc" stroke-width="2" opacity="0.75"/>
-              <path d="M 100 450 A 350 80 0 0 1 800 450" fill="none" stroke="#ffffff" stroke-width="2.2" opacity="0.85"/>
+              <path class="plasma-stream-3" d="M 50 450 A 400 92 0 0 1 850 450" fill="none" stroke="#7dd3fc" stroke-width="2" opacity="0.75"/>
+              <path class="plasma-stream-1" d="M 100 450 A 350 80 0 0 1 800 450" fill="none" stroke="#ffffff" stroke-width="2.2" opacity="0.85"/>
             </g>
 
             <!-- Layer 5: The Event Horizon (Pure Black Void Shadow) -->
             <circle cx="450" cy="450" r="150" fill="#000000"/>
 
             <!-- Layer 6: Photon Sphere Ring (Light trapped in orbit at boundary) -->
-            <circle cx="450" cy="450" r="154" fill="none" stroke="url(#bh-photon-grad)" stroke-width="3" opacity="0.96"/>
-            <circle cx="450" cy="450" r="156" fill="none" stroke="#38bdf8" stroke-width="1.2" opacity="0.85"/>
-            <circle cx="450" cy="450" r="152.2" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.98"/>
+            <g class="bh-photon-ring">
+              <circle cx="450" cy="450" r="154" fill="none" stroke="url(#bh-photon-grad)" stroke-width="3" opacity="0.96"/>
+              <circle cx="450" cy="450" r="156" fill="none" stroke="#38bdf8" stroke-width="1.2" opacity="0.85"/>
+              <circle cx="450" cy="450" r="152.2" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.98"/>
+            </g>
 
             <!-- Event Horizon Inner Eclipse Mask -->
             <circle cx="450" cy="450" r="149" fill="#000000"/>
@@ -858,15 +947,17 @@
             <g transform="rotate(-12.5 450 450)">
               <path d="M 20 450 A 430 100 0 0 0 880 450 L 650 450 A 200 52 0 0 1 250 450 Z" 
                     fill="url(#bh-disk-grad)" opacity="0.95"/>
-              <path d="M 50 450 A 400 92 0 0 0 850 450" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.75"/>
-              <path d="M 90 450 A 360 82 0 0 0 810 450" fill="none" stroke="#ffffff" stroke-width="2.8" opacity="0.95"/>
-              <path d="M 130 450 A 320 73 0 0 0 770 450" fill="none" stroke="#7dd3fc" stroke-width="2" opacity="0.85"/>
-              <path d="M 170 450 A 280 64 0 0 0 730 450" fill="none" stroke="#bae6fd" stroke-width="1.8" opacity="0.9"/>
+              <path class="plasma-stream-2" d="M 50 450 A 400 92 0 0 0 850 450" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.75"/>
+              <path class="plasma-stream-1" d="M 90 450 A 360 82 0 0 0 810 450" fill="none" stroke="#ffffff" stroke-width="2.8" opacity="0.95"/>
+              <path class="plasma-stream-3" d="M 130 450 A 320 73 0 0 0 770 450" fill="none" stroke="#7dd3fc" stroke-width="2" opacity="0.85"/>
+              <path class="plasma-stream-2" d="M 170 450 A 280 64 0 0 0 730 450" fill="none" stroke="#bae6fd" stroke-width="1.8" opacity="0.9"/>
             </g>
 
             <!-- Layer 8: Relativistic Doppler Blueshift Hotspot (Left Horizon Cusp Glare) -->
-            <ellipse cx="270" cy="488" rx="95" ry="42" transform="rotate(-12.5 270 488)" fill="url(#bh-flare)" opacity="0.88"/>
-            <circle cx="280" cy="485" r="16" fill="#ffffff" opacity="0.92" filter="url(#bh-soft-blur)"/>
+            <g class="bh-flare-hotspot">
+              <ellipse cx="270" cy="488" rx="95" ry="42" transform="rotate(-12.5 270 488)" fill="url(#bh-flare)" opacity="0.88"/>
+              <circle cx="280" cy="485" r="16" fill="#ffffff" opacity="0.92" filter="url(#bh-soft-blur)"/>
+            </g>
 
             <!-- Layer 9: Center Singularity Absolute Black Void -->
             <circle cx="450" cy="450" r="115" fill="#000000"/>
